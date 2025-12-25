@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account — Vintage Auth{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Decorative Header -->
+    <div class="auth-header">
+        <div class="ornament">❧</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join our distinguished community</p>
+        <div class="ornament">❧</div>
+    </div>
+    
+    <!-- Authentication Card -->
+    <div class="auth-card">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span class="flash-icon">
+                            {% if category == 'success' %}✓{% elif category == 'error' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+                        </span>
+                        <span class="flash-text">{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Signup Form -->
+        <form method="POST" action="{{ url_for('signup') }}" class="auth-form" id="signupForm">
+            <!-- Username Field -->
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        required
+                        minlength="3"
+                        maxlength="30"
+                        pattern="[a-zA-Z0-9_]+"
+                    >
+                </div>
+                <span class="form-hint">Letters, numbers, and underscores only (3-30 characters)</span>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </span>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+            </div>
+            
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </span>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="Create a strong password"
+                        autocomplete="new-password"
+                        required
+                        minlength="8"
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Password Strength Indicator -->
+                <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bars">
+                        <span class="strength-bar"></span>
+                        <span class="strength-bar"></span>
+                        <span class="strength-bar"></span>
+                        <span class="strength-bar"></span>
+                    </div>
+                    <span class="strength-text">Password strength</span>
+                </div>
+            </div>
+            
+            <!-- Confirm Password Field -->
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </span>
+                    <input 
+                        type="password" 
+                        id="confirm_password" 
+                        name="confirm_password" 
+                        class="form-input" 
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+                <span class="form-hint password-match" id="passwordMatch"></span>
+            </div>
+            
+            <!-- Terms Agreement -->
+            <div class="form-group">
+                <label class="checkbox-wrapper">
+                    <input type="checkbox" name="agree_terms" class="checkbox-input" required>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-label">
+                        I agree to the <a href="#" class="inline-link">Terms of Service</a> and <a href="#" class="inline-link">Privacy Policy</a>
+                    </span>
+                </label>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary" id="signupBtn">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loader" style="display: none;">
+                    <span class="loader-dot"></span>
+                    <span class="loader-dot"></span>
+                    <span class="loader-dot"></span>
+                </span>
+            </button>
+        </form>
+        
+        <!-- Divider -->
+        <div class="auth-divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">or</span>
+            <span class="divider-line"></span>
+        </div>
+        
+        <!-- Login Link -->
+        <div class="auth-footer">
+            <p class="auth-footer-text">
+                Already have an account?
+                <a href="{{ url_for('login') }}" class="auth-link">Sign in</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Decorative Footer -->
+    <div class="auth-decoration">
+        <span class="decoration-line"></span>
+        <span class="decoration-symbol">✦</span>
+        <span class="decoration-line"></span>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle Password Visibility
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const button = input.parentElement.querySelector('.password-toggle');
+        const eyeOpen = button.querySelector('.eye-open');
+        const eyeClosed = button.querySelector('.eye-closed');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeOpen.style.display = 'none';
+            eyeClosed.style.display = 'block';
+        } else {
+            input.type = 'password';
+            eyeOpen.style.display = 'block';
+            eyeClosed.style.display = 'none';
+        }
+    }
+    
+    // Password Strength Checker
+    const passwordInput = document.getElementById('password');
+    const strengthBars = document.querySelectorAll('.strength-bar');
+    const strengthText = document.querySelector('.strength-text');
+    
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        // Check length
+        if (password.length >= 8) strength++;
+        if (password.length >= 12) strength++;
+        
+        // Check for uppercase
+        if (/[A-Z]/.test(password)) strength++;
+        
+        // Check for lowercase
+        if (/[a-z]/.test(password)) strength++;
+        
+        // Check for numbers
+        if (/\d/.test(password)) strength++;
+        
+        // Check for special characters
+        if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+        
+        // Normalize to 4 levels
+        let level = Math.min(4, Math.floor(strength * 4 / 6));
+        
+        // Update UI
+        strengthBars.forEach((bar, index) => {
+            bar.classList.remove('weak', 'fair', 'good', 'strong');
+            if (index < level) {
+                if (level === 1) bar.classList.add('weak');
+                else if (level === 2) bar.classList.add('fair');
+                else if (level === 3) bar.classList.add('good');
+                else bar.classList.add('strong');
+            }
+        });
+        
+        // Update text
+        const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+        strengthText.textContent = password.length > 0 ? labels[level] : 'Password strength';
+        strengthText.className = 'strength-text ' + ['', 'weak', 'fair', 'good', 'strong'][level];
+    });
+    
+    // Password Match Checker
+    const confirmInput = document.getElementById('confirm_password');
+    const matchText = document.getElementById('passwordMatch');
+    
+    confirmInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+        const confirm = this.value;
+        
+        if (confirm.length > 0) {
+            if (password === confirm) {
+                matchText.textContent = '✓ Passwords match';
+                matchText.classList.add('match');
+                matchText.classList.remove('no-match');
+            } else {
+                matchText.textContent = '✕ Passwords do not match';
+                matchText.classList.add('no-match');
+                matchText.classList.remove('match');
+            }
+        } else {
+            matchText.textContent = '';
+        }
+    });
+    
+    // Form Submission with Loading State
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        const password = passwordInput.value;
+        const confirm = confirmInput.value;
+        
+        if (password !== confirm) {
+            e.preventDefault();
+            matchText.textContent = '✕ Passwords do not match';
+            matchText.classList.add('no-match');
+            return;
+        }
+        
+        const btn = document.getElementById('signupBtn');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'flex';
+        btn.disabled = true;
+    });
+    
+    // Auto-hide flash messages
+    setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(msg => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-10px)';
+            setTimeout(() => msg.remove(), 300);
+        });
+    }, 5000);
+</script>
+{% endblock %}
