@@ -176,3 +176,12 @@ font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
       text-align: center;
       justify-content: center;
 }
+
+.hiddenclass{
+   display: none;
+
+}
+.input{
+   height:10px;
+   width:20px;
+}
