@@ -1,5 +1,5 @@
 let shop=document.getElementById("btn-shopnow");
-let header=document.querySelector("header");
+let container=document.getElementById("hf-continer");
 shop.addEventListener("click",function(){
-  header.classList.toggle("hiddenclass");
+  container.classList.add("hiddenclass");
 });
